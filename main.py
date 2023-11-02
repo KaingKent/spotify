@@ -1,4 +1,4 @@
-import api_calls
+import api
 
 def list(thing):
     for i , t in enumerate(thing):
@@ -15,23 +15,23 @@ def get_user_input(token):
             print("unlucky")
 
 def get_artist(user_artist, token):
-    result = api_calls.search_artist(token, user_artist)
+    result = api.search_artist(token, user_artist)
     artist_name = result["name"]
     artist_id = result["id"]
 
     user_input = int(input("Choose one of the following:\n1. Top songs \n2. Albums\nChoosing: "))
     
     if user_input == 1:
-        songs = api_calls.get_songs_by_artist(token, artist_id)
+        songs = api.get_songs_by_artist(token, artist_id)
         print(f"Top 10 songs by {artist_name}: \n")
         list(songs)
     elif user_input == 2:
-        albums = api_calls.get_albums_by_artist(token, artist_id)
+        albums = api.get_albums_by_artist(token, artist_id)
         print(f"=========\n{artist_name} Albums: \n")
         list(albums)
 
 def main():
-    token = api_calls.get_token()
+    token = api.get_token()
     
     while True:
         t = get_user_input(token)
