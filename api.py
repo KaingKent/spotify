@@ -60,6 +60,17 @@ def search_album(token, album_name):
         return None 
     return json_result[0]
 
+def search_track(token, album_name, artist_name):
+    url = "https://api.spotify.com/v1/search"
+    headers = get_auth_headers(token)
+    query = f"q={album_name}&{artist_name}&type=track&limit=1"
+    query_url = url + "?" + query
+
+    result = get(query_url, headers=headers)
+    json_result = json.loads(result.content)
+
+    print(json.dumps(json_result))
+
 def get_songs_by_artist(token, artist_id):
     url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
     headers = get_auth_headers(token)
@@ -82,11 +93,10 @@ def get_appears_on_by_artist(token, artist_id):
     json_result = json.loads(result.content)['items']
     return json_result
 
-def get_song_from_album(token, album_id):
+def get_song_from_album(token, album_id, artist_name):
     url = f"https://api.spotify.com/v1/albums/{album_id}/tracks"
     headers = get_auth_headers(token)
     result = get(url, headers=headers)
-    json_result = json.loads(result.content)
-    print(json.dumps(json_result))
+    json_result = json.loads(result.content)['items']
     return json_result
 #get related artists
