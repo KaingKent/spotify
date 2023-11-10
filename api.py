@@ -69,6 +69,10 @@ def search_track(token, album_name, artist_name):
     result = get(query_url, headers=headers)
     json_result = json.loads(result.content)
 
+    if len(json_result) == 0:
+        print("no track found")
+        return None 
+
     print(json.dumps(json_result))
 
 def get_songs_by_artist(token, artist_id):
@@ -99,4 +103,32 @@ def get_song_from_album(token, album_id, artist_name):
     result = get(url, headers=headers)
     json_result = json.loads(result.content)['items']
     return json_result
-#get related artists
+
+def get_related_artists(token, artist_id):
+    url = f"https://api.spotify.com/v1/artists/{artist_id}/related-artists"
+    headers = get_auth_headers(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)['artists']
+
+    #print(json.dumps(json_result))
+
+    return json_result
+
+def get_album(token, album_id):
+    url = f"https://api.spotify.com/v1/albums/{album_id}"
+    headers = get_auth_headers(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)
+
+    #print(json.dumps(json_result))
+
+    return json_result
+
+def get_new_releases(token):
+    url = f"https://api.spotify.com/v1/browse/new-releases?country=US&limit=20"
+
+    headers = get_auth_headers(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)['albums']['items']
+
+    return json_result

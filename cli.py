@@ -10,11 +10,46 @@ def get_user_input(token):
     user_input = input("What would you like to do?\n1. Search Artist \n2. Search Album\nQuit\nChoosing: ").lower()
     match user_input:
         case "1":
-            get_artist(input("What artist would you like to seach?: "), token)        
+            get_artist(input("What artist would you like to seach?: "), token)
+        case "2":
+            albums(input("What would you like to search for?: \n1. An Album's details\n2. New releases\nChoosing: "), token)
         case "quit":
             return False
         case _:
             print("unlucky")
+
+def albums(user_input, token):
+    match user_input:
+        case "1":
+            album_tracks(input("what album would you like to see?: "), token)
+        case "2":
+            new_releases(token)
+
+def new_releases(token):
+    results = api.get_new_releases(token)
+
+    for x in range(len(results)):
+        print(f"{x+1}. {results[x]['name']} by {results[x]['artists'][0]['name']}")
+            
+def album_tracks(user_album, token):
+    result = api.search_album(token, user_album)
+    album_id = result["id"]
+
+    details = api.get_album(token, album_id)
+    print()
+    print(f"Album name: {details['name']}")
+    print(f"Artist: {details['artists'][0]['name']}")
+    print(f"Album type: {details['album_type']}")
+    print(f"Label: {details['label']}")
+    print(f"Album release date: {details['release_date']}")
+    print(f"Album tracks: {details['total_tracks']}")
+    for i in range(int(details['total_tracks'])):
+        print(f"{i+1}. {details['tracks']['items'][i]['name']}")
+    print()
+
+
+    #print(details)
+
 
 def get_artist(user_artist, token):
     result = api.search_artist(token, user_artist)
@@ -22,7 +57,7 @@ def get_artist(user_artist, token):
     artist_id = result["id"]
 
     while True:
-        user_input = input("Choose one of the following:\n1. Top songs \n2. Albums\n3. Appears on\n4. Related Artist\n 9. Back\nChoosing: ").lower()
+        user_input = input("Choose one of the following:\n1. Top songs \n2. Albums\n3. Appears on\n4. Related Artist\n9. Back\nChoosing: ").lower()
         if user_input == "1":
             songs = api.get_songs_by_artist(token, artist_id)
             print(f"Top 10 songs by {artist_name}: \n")
@@ -37,8 +72,9 @@ def get_artist(user_artist, token):
             for i , t in enumerate(appears_on):
                 get_album(t['id'],token, artist_name, t['name'])
         elif user_input == "4":
-            related = api.get_related_artists()
-        elif user_input == "back":
+            related = api.get_related_artists(token, artist_id)
+            list(related)
+        elif (user_input == "back" or user_input == "9"):
             break
     
 
